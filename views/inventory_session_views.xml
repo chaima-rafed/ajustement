@@ -1,0 +1,112 @@
+<odoo>
+    <record id="inventory_session_menu_action" model="ir.actions.act_window">
+        <field name="name">Inventory Sessions</field>
+        <field name="res_model">inventory.session</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p>
+                Create and manage inventory sessions for comparing counts between groups.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_inventory_session_root"
+          name="Groupes Inventaires"
+          parent="stock.menu_stock_adjustments"
+          sequence="1"
+          action="inventory_session_menu_action"/>
+
+    <record id="view_inventory_session_tree" model="ir.ui.view">
+        <field name="name">inventory.session.tree</field>
+        <field name="model">inventory.session</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="session_date"/>
+                <field name="state" widget="badge" readonly="1"
+                           decoration-danger="state == 'draft'"
+                           decoration-warning="state == 'partially_validated'"
+                           decoration-success="state == 'validated'"/>
+            </tree>
+        </field>
+    </record>
+
+     <record id="view_inventory_session_form" model="ir.ui.view">
+        <field name="name">inventory.session.form</field>
+        <field name="model">inventory.session</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                        <field name="state" widget="statusbar" readonly="1"
+                           statusbar_visible="draft,validated,partially_validated"/>
+
+                        <button name="action_view_red_lines" type="object"
+                                string="corriger les écarts" class="btn-danger"/>
+
+                        <button name="action_create_quant_lines" type="object"
+                                string="Valider les lignes sans écarts" icon="fa-balance-scale" class="btn-success"  modifiers="{'invisible': [('state', 'in', ['validated', 'partially_validated'])]}"/>
+                        <button name="action_process_blue_lines" type="object"
+                        string="Valider les Lignes Corrigées" icon="fa-balance-scale" class="btn-primary" modifiers="{'invisible': [('state', '=', 'validated')]}"/>
+
+                        <button name="action_export_session_lines" type="object"
+                                string="Export to excel" icon="fa-download" class="btn-secondary" />
+                        <button name="action_import_session_lines" type="object"
+                                string="Import Lines" icon="fa-upload" class="btn-secondary" />
+
+                </header>
+                <sheet>
+
+                    <h1><field name="name"/></h1>
+                    <group>
+                        <field name="session_date"/>
+                    </group>
+                    <div class="o_row">
+                        <div class="o_col">
+                            <group>
+                                <field name="group1_date_debut" string="Date Début Groupe 1"/>
+                                <field name="group1_date_fin" string="Date Fin Groupe 1"/>
+                            </group>
+                        </div>
+                        <div class="o_col">
+                            <group>
+                                <field name="group2_date_debut" string="Date Début Groupe 2"/>
+                                <field name="group2_date_fin" string="Date Fin Groupe 2"/>
+                            </group>
+                        </div>
+                    </div>
+                    <field  name="session_line_ids">
+                        <tree editable="bottom"
+                              decoration-success="difference == 0 and final_qty == group_1_qty and final_qty == group_2_qty"
+                              decoration-danger="difference != 0 and final_qty == 0"
+                              decoration-primary="difference != 0 and final_qty != 0">
+                            <field name="location_id"/>
+                            <field name="product_id"/>
+                            <field name="group_1_qty" style="font-weight: bold;"/>
+                            <field name="group_2_qty" style="font-weight: bold;"/>
+                            <field name="difference" readonly="1" style="font-weight: bold;"/>
+                            <field name="final_qty" style="font-weight: bold;"/>
+                        </tree>
+
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_inventory_session_line_tree_red" model="ir.ui.view">
+         <field name="name">inventory.session.line.tree.red</field>
+         <field name="model">inventory.session.line</field>
+         <field name="arch" type="xml">
+            <tree editable="bottom">
+                 <field name="location_id"/>
+                 <field name="product_id"/>
+                 <field name="group_1_qty"/>
+                 <field name="group_2_qty"/>
+                 <field name="difference" readonly="1"/>
+                 <field name="final_qty"/>
+            </tree>
+         </field>
+    </record>
+
+
+
+</odoo>

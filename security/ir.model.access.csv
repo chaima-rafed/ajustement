@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_inventory_session,access_inventory_session,model_inventory_session,,1,1,1,1
+access_inventory_session_line,access_inventory_session_line,model_inventory_session_line,,1,1,1,1
+
+access_inventory_session_line_import_wizard,access_inventory_session_line_import_wizard,model_inventory_session_line_import_wizard,,1,1,1,1
